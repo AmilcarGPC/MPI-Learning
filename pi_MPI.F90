@@ -6,7 +6,7 @@ program main
       double precision  mypi, pi, h, sum, x, f, a
       integer n, myid, numprocs, i, ierr
       real start, finish
-      double precision :: min_time, max_time, total_time
+      double precision :: cpu_time_used, min_time, max_time, total_time
   
       ! Function to integrate
       f(a) = 4.d0 / (1.d0 + a*a)
@@ -19,10 +19,7 @@ program main
       call MPI_COMM_RANK(MPI_COMM_WORLD, myid, ierr)
   
       ! Processor 0: read n
-      if (myid.eq.0) then
-          print*, 'Enter the number of intervals:  '
-          read(*,*) n
-      endif
+      n = 1000000000
   
       ! MPI: Broadcast n
       call MPI_BCAST(n, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
