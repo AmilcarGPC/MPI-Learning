@@ -16,7 +16,7 @@ double f(double x, double y) {
 
 int main(int argc, char* argv[]) {
     int n, m, myid, numprocs, i, j;
-    double result, dx, dy, sum, x, y, cpu_time_used;
+    double result, dx, dy, sum,gsum, x, y, cpu_time_used;
     clock_t start, end;
     double min_time, max_time, total_time;
 
@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
     // Processor 0 reads the number of intervals
-    n = 1000;
-    m = 1000;
+    n = 10000;
+    m = 10000;
     double a = 0.0, b = 2.0, c = -1.0, d = 1.0;
 
     // MPI Broadcast n
@@ -40,13 +40,15 @@ int main(int argc, char* argv[]) {
 
     // Parallel calculation
     start = clock();
-    for (i = myid; i < m; i += numprocs) {
-        x = a + i * dx + dx / 2.0;
-        for (j = myid; j < n; j += numprocs) {
-            y = c + j * dy + dy / 2.0;
+    for (i = myid; i < n; i += numprocs) {
+        y = c + j * dy + dy / 2.0;
+        for (j = myid; j < m; j += numprocs) {
+            x = a + i * dx + dx / 2.0;
             sum += f(x, y);
         }
+        gsum = dx * sum;
     }
+    gsum = dy * sum;
 
     // MPI Reduction
     MPI_Reduce(&sum, &result, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
