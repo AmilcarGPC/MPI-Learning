@@ -1,8 +1,8 @@
 /*
 PROGRAM: Calculate integral                                                          !
 HOW TO RUN :                                            
-$ mpicxx Exercise5_MPI.cpp -o Exercise5_MPI          
-$ mpiexec -n 4 ./Exercise5_MPI
+$ mpicxx Exercise5_MPI.cpp -o run_Exercise5_MPI          
+$ mpiexec -n 4 ./run_Exercise5_MPI
 */
 
 #include <stdio.h>

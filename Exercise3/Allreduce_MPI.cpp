@@ -1,8 +1,8 @@
 /*
 PROGRAM: All Reduce communication method                                                    
 HOW TO RUN :                                            
-$ mpicxx Allreduce_MPI.cpp -o Allreduce_MPI          
-$ mpiexec -n 4 ./Allreduce_MPI
+$ mpicxx Allreduce_MPI.cpp -o run_Allreduce_MPI          
+$ mpiexec -n 4 ./run_Allreduce_MPI
 */
 
 #include <stdio.h>

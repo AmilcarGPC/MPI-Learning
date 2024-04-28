@@ -1,8 +1,8 @@
 /*
 PROGRAM: Vector addition
 HOW TO RUN :
-$ mpicxx Exercise1_MPI.cpp -o Exercise1_MPI
-$ mpiexec -n 4 ./Exercise1_MPI
+$ mpicxx Exercise1_MPI.cpp -o run_Exercise1_MPI
+$ mpiexec -n 4 ./run_Exercise1_MPI
 */
 
 #include <stdio.h>

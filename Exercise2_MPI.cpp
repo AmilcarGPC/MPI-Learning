@@ -1,8 +1,8 @@
 /*
 PROGRAM: Sum of elements of a vector                                                            !
 HOW TO RUN :                                            
-$ mpicxx Exercise2_MPI.cpp -o Exercise2_MPI          
-$ mpiexec -n 4 ./Exercise2_MPI
+$ mpicxx Exercise2_MPI.cpp -o run_Exercise2_MPI          
+$ mpiexec -n 4 ./run_Exercise2_MPI
 */
 
 #include <stdio.h>

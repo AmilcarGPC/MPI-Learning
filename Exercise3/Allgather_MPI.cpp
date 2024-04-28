@@ -1,8 +1,8 @@
 /*
 PROGRAM: All Gather communication method                                                    
 HOW TO RUN :                                            
-$ mpicxx Allgather_MPI.cpp -o Allgather_MPI          
-$ mpiexec -n 4 ./Allgather_MPI
+$ mpicxx Allgather_MPI.cpp -o run_Allgather_MPI          
+$ mpiexec -n 4 ./run_Allgather_MPI
 */
 
 #include <stdio.h>

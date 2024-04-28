@@ -1,8 +1,8 @@
 /*
 PROGRAM: Calculate PI                                                            !
 HOW TO RUN :                                            
-$ mpicxx Exercise4_MPI.cpp -o Exercise4_MPI          
-$ mpiexec -n 4 ./Exercise4_MPI
+$ mpicxx Exercise4_MPI.cpp -o run_Exercise4_MPI          
+$ mpiexec -n 4 ./run_Exercise4_MPI
 */
 
 #include <stdio.h>

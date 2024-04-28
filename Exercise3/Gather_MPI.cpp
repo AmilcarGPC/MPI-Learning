@@ -1,8 +1,8 @@
 /*
 PROGRAM: Gather communication method                                                    
 HOW TO RUN :                                            
-$ mpicxx Gather_MPI.cpp -o Gather_MPI          
-$ mpiexec -n 4 ./Gather_MPI
+$ mpicxx Gather_MPI.cpp -o run_Gather_MPI          
+$ mpiexec -n 4 ./run_Gather_MPI
 */
 
 #include <stdio.h>

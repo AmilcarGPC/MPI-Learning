@@ -1,8 +1,8 @@
 /*
 PROGRAM: Reduce communication method                                                    
 HOW TO RUN :                                            
-$ mpicxx Reduce_MPI.cpp -o Reduce_MPI          
-$ mpiexec -n 4 ./Reduce_MPI
+$ mpicxx Reduce_MPI.cpp -o run_Reduce_MPI          
+$ mpiexec -n 4 ./run_Reduce_MPI
 */
 
 #include <stdio.h>
