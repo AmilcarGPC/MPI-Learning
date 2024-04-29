@@ -17,8 +17,8 @@ $ mpiexec -n 4 ./run_Project1_MPI
 void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew, double **PG, int nrec);
 
 int main(int argc, char *argv[]) {
-    int divx = 9;
-    int divy = 1;
+    int divx = 1;
+    int divy = 4;
     int i, j, n, index,i_index,j_index;
     int NxG, NyG, Nt, Nx, Ny, NN, NNF, nrec, iIni, iFin;
     double kx, ky, xI, xF, yI, yF, tF, tI, Dx, Dy, Dt, t;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     int *index_global_j;
 
     int **t_index_global_i;
-    int **t_index_global_j;
+
 
     const int ndims = 2;
     int dims_vec[ndims]; 
@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
     tI = 0.0; // Tiempo inicial
     tF = 0.2; // Tiempo final
 
-    Nt = 1001; // Numero de pasos en t
-    NxG = 9;   // Numero de puntos en x (GLOBAL)
-    NyG = 9;   // Numero de puntos en y (GLOBAL)
+    Nt = 100000; // Numero de pasos en t
+    NxG = 150;   // Numero de puntos en x (GLOBAL)
+    NyG = 150;   // Numero de puntos en y (GLOBAL)
 
     // Discretización
     Dx = (xF - xI) / (NxG - 1);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
         return 0;
     } 
 
-    if (taskid == 0){
+    /*if (taskid == 0){
         printf("Matriz:\n");
         for (int i = 0; i < NxG; i++) {
             for (int j = 0; j < NyG; j++) {
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
             }
             printf("\n");
         }
-    }
+    }*/
 
     // MPI: Topologia (cartesiana)
     dims_vec[0] = divx;                                                   
@@ -196,6 +196,7 @@ int main(int argc, char *argv[]) {
         Nx++;
         MPI_Cart_rank(comm2D,CORDS, &destino);
         vecino[0] = destino;
+        //printf("dest1: %d\n",destino);
     }
     
     if (coords[0] + 1 < divx) {
@@ -204,6 +205,7 @@ int main(int argc, char *argv[]) {
         Nx++;
         MPI_Cart_rank(comm2D,CORDS,&destino);
         vecino[1] = destino;
+        //printf("dest2: %d\n",destino);
     }
     if (coords[1] - 1 >= 0) {
         CORDS[0] = coords[0];
@@ -211,6 +213,7 @@ int main(int argc, char *argv[]) {
         Ny++;
         MPI_Cart_rank(comm2D,CORDS, &destino);
         vecino[2] = destino;
+        //printf("dest3: %d\n",destino);
     }
     if (coords[1] + 1 < divy) {
         Ny++;
@@ -218,41 +221,27 @@ int main(int argc, char *argv[]) {
         CORDS[1] = coords[1] + 1;
         MPI_Cart_rank(comm2D,CORDS, &destino);
         vecino[3] = destino;
+        //printf("dest4: %d\n",destino);
     }
-
+    //printf("B| taskid %d, Ny: %d\n",taskid, Ny);
     // MPI: Indices locales y globales
     index_global_i = (int *)malloc(Nx * sizeof(int));
     index_global_j = (int *)malloc(Ny * sizeof(int));
 
-    t_index_global_i = (int **)malloc(numtasks * sizeof(int *));
-    for (i = 0; i < numtasks; i++) {
-        t_index_global_i[i] = (int *)malloc(Nx * sizeof(int));
+    t_index_global_i = (int **)malloc((numtasks - 1) * sizeof(int *));
+    for (i = 0; i < numtasks - 1; i++) {
+        t_index_global_i[i] = (int *)malloc(Ndom * sizeof(int));
     }
 
-    t_index_global_j = (int **)malloc(numtasks* sizeof(int *));
-    for (i = 0; i < numtasks; i++) {
-        t_index_global_j[i] = (int *)malloc(Ny * sizeof(int));
-    }
-
-    for (i = 0; i < numtasks; i++) {
+    for (i = 0; i < numtasks - 1; i++) {
         MPI_Cart_coords(comm2D,i,ndims,pcoords);
+        //printf("A| tasdkid: %d. coordenadas (%d,%d).\n",i,pcoords[0],pcoords[1]);
         if (pcoords[0] == 0) {
-            for (j = 0; j < Nx; j++)
+            for (j = 0; j < Ndom; j++)
                 t_index_global_i[i][j] = j;
         } else {
-            for (j = 1; j < Nx + 1; j++)
+            for (j = 1; j < Ndom + 1; j++)
                 t_index_global_i[i][j-1] = pcoords[0] * Ndom + j - 1;
-        }
-    }
-
-    for (i = 0; i < numtasks; i++) {
-        MPI_Cart_coords(comm2D,i,ndims,pcoords);
-        if (pcoords[1] == 0) {
-            for (j = 0; j < Ny; j++)
-                t_index_global_j[i][j] = j;
-        } else {
-            for (j = 1; j < Ny + 1; j++)
-                t_index_global_j[i][j-1] = pcoords[1] * Mdom + j - 1;
         }
     }
 
@@ -273,7 +262,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Imprimir
-    /*
     if (taskid == 0) {
         printf("\n");
         printf("(NxG,NyG)=%d %d\n", NxG, NyG);
@@ -281,8 +269,6 @@ int main(int argc, char *argv[]) {
         printf("\n");
     }
     printf("taskid = %d, Ndom = %d, Mdom = %d, Nx_local = %d, Ny_local = %d, index global i = [%d->%d], index global j = [%d->%d]\n", taskid, Ndom, Mdom, Nx, Ny, index_global_i[0], index_global_i[Nx - 1], index_global_j[0], index_global_j[Ny - 1]);
-    */
-
     // MPI: Variables locales
     x = (double *)malloc(Nx * sizeof(double));
     y = (double *)malloc(Ny * sizeof(double));
@@ -302,14 +288,17 @@ int main(int argc, char *argv[]) {
         j_index = index_global_j[j];
         y[j] = yG[j_index];
     }
+    //printf("A| tasdkid: %d\n",taskid);
     // Condiciones Iniciales
         for (i = 0; i < Nx; i++) {
             i_index = index_global_i[i];
             for (j = 0; j < Ny; j++) {
                 j_index = index_global_j[j];
+                //printf("UG[%d][%d] = %f\n",i_index,j_index,UG[i_index][j_index]);
                 Uold[i][j] = UG[i_index][j_index];
             }
         }
+    //printf("B| tasdkid: %d\n",taskid);
     // Actualizacion
     for (int i = 0; i < Nx; i++) {
         for (int j = 0; j < Ny; j++) {
@@ -325,7 +314,7 @@ int main(int argc, char *argv[]) {
     }
 
     // MPI: Tipo de vectores (comunicaciones)
-    MPI_Type_vector(1, MdomF, 0, MPI_DOUBLE_PRECISION, &tipo_col);
+    MPI_Type_vector(1, Ny, 0, MPI_DOUBLE_PRECISION, &tipo_col);
     MPI_Type_vector(NN*Ny,1,1, MPI_DOUBLE_PRECISION, &tipo_block);
     MPI_Type_commit(&tipo_col);
     MPI_Type_commit(&tipo_block);
@@ -339,6 +328,7 @@ int main(int argc, char *argv[]) {
     aW = rx;
     aS = ry;
     aN = ry;
+    //printf("C| tasdkid: %d\n",taskid);
 
     for (n = 0; n < Nt; n++) {
         // Nuevos valores
@@ -351,133 +341,22 @@ int main(int argc, char *argv[]) {
                              aN * Uold[i][j + 1];
             }
         }
-        if (n == 1){
-            iIni = 1;
-            if (coords[0] == 0)
-                iIni = 0;
-            jIni = 1;
-            if (coords[1] == 0)
-                jIni = 0;
-
-            iFin = iIni+Ndom;
-            if (coords[0] == divx-1)
-                iFin = iIni+NdomF;
-            
-            jFin = jIni+Mdom;
-            if (coords[1] == divy-1)
-                jFin = jIni+MdomF;
-            suma = 0.0;
-    
-                if (taskid == 0){
-                    printf("\nMatriz Antes del cálculo\n");
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 3){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-        }
 
         // North exchange
         if (vecino[3] != MPI_PROC_NULL) {
-            double *sendBuffer = (double *)malloc(Nx * sizeof(double));
-            double *recvBuffer = (double *)malloc(Nx * sizeof(double));
+            MPI_Request req[2];
             for (int i = 0; i < Nx; i++) {
-                sendBuffer[i] = Unew[i][Ny - 2];
-            }
-            MPI_Sendrecv(&sendBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[3], etiqueta,
-                         &recvBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[3], etiqueta,
-                         comm2D, &statut);
-            for (int i = 0; i < Nx; i++) {
-                Unew[i][Ny - 1] = recvBuffer[i];
+                MPI_Isend(&Unew[i][Ny - 2], 1, MPI_DOUBLE_PRECISION, vecino[3], etiqueta, comm2D, &req[0]);
+                MPI_Irecv(&Unew[i][Ny - 1], 1, MPI_DOUBLE_PRECISION, vecino[3], etiqueta, comm2D, &req[1]);
+                MPI_Waitall(2, req, &statut);
             }
         }
-
         if (vecino[2] != MPI_PROC_NULL) {
-            double *sendBuffer = (double *)malloc(Nx * sizeof(double));
-            double *recvBuffer = (double *)malloc(Nx * sizeof(double));
+            MPI_Request req1[2];
             for (int i = 0; i < Nx; i++) {
-                sendBuffer[i] = Unew[i][1];
-            }
-            MPI_Sendrecv(&sendBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[2], etiqueta,
-                         &recvBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[2], etiqueta,
-                         comm2D, &statut);
-            for (int i = 0; i < Nx; i++) {
-                Unew[i][0] = recvBuffer[i];
+                MPI_Isend(&Unew[i][1], 1, MPI_DOUBLE_PRECISION, vecino[2], etiqueta, comm2D, &req1[0]);
+                MPI_Irecv(&Unew[i][0], 1, MPI_DOUBLE_PRECISION, vecino[2], etiqueta, comm2D, &req1[1]);
+                MPI_Waitall(2, req1, &statut);
             }
         }
 
@@ -488,105 +367,6 @@ int main(int argc, char *argv[]) {
                          &Unew[Nx - 1][0], 1, tipo_col, vecino[1], etiqueta,
                          comm2D, &statut);
 
-        if (n == 1){
-            iIni = 1;
-            if (coords[0] == 0)
-                iIni = 0;
-            jIni = 1;
-            if (coords[1] == 0)
-                jIni = 0;
-
-            iFin = iIni+Ndom;
-            if (coords[0] == divx-1)
-                iFin = iIni+NdomF;
-            
-            jFin = jIni+Mdom;
-            if (coords[1] == divy-1)
-                jFin = jIni+MdomF;
-            suma = 0.0;
-    
-            if (taskid == 0){
-                printf("\nMatriz Después del cálculo\n");
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 3){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int i = iIni; i < iFin; i++) {
-                            for (int j = jIni; j < jFin; j++) {
-                                printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                            }
-                            printf("\n");
-                        }
-                }
-        }
         //printf("C| tasdkid: %d\n",taskid);
         // Actualización
         for (int i = 0; i < Nx; i++) {
@@ -594,7 +374,6 @@ int main(int argc, char *argv[]) {
                 Uold[i][j] = Unew[i][j];
             }
         }
-        
         // Guardar resultados cada 1000 iteraciones
         if (n % 1000 == 0) {
             t = tI + n * Dt;
@@ -603,145 +382,85 @@ int main(int argc, char *argv[]) {
                 //printf("%d tiempo: %f\n",nrec,t);
 
             if (Nx <= PARAVIEW_MAX_GRID) {
+                //printf("D| tasdkid: %d\n",taskid);
                 if (taskid < numtasks-1) {
-                    int lNx;
-                    lNx = Ndom;
-                    if (coords[0]==divx-1){
-                        lNx = NdomF;
-                    }
                     iIni = 1;
                     if (coords[0] == 0)
                         iIni = 0;
-
-                    for (int c = 0; c < lNx; c++){
+                    iFin = iIni + Ndom - 1;
+                    //printf("E| tasdkid: %d\n",taskid);
+                    for (int c = 0; c < Ndom; c++){
+                        //
+                        //
                         MPI_Send(&Unew[iIni+c][0], 1, tipo_col, numtasks - 1, etiqueta, MPI_COMM_WORLD);
+                        //printf("B| tasdkid: %d. \n",taskid);
+                        //printf("B| chck: %d . c: %d, Ndom: %d. \n",taskid,c,Ndom);
                     }             
                 }
-
+                //printf(">>| chck: %d\n",taskid);
                 MPI_Barrier(comm2D);
                 if (taskid == numtasks-1) {
+                    //printf("Cargando en Paraview...\n");
                     double received_column[Ny];
-                    iIni = t_index_global_i[taskid][0];
-                    jIni = t_index_global_j[taskid][0];
-                    
-                    if (coords[0] == 0){
-                        for (int j = 0; j < MdomF; j++) {
-                            for (int i = 0; i < NdomF; i++) {
-                                UG[iIni+i][jIni+j-1] = Unew[i][j];
-                            }
-                        }
+                    iIni = taskid * Ndom - 1;
+                    iFin = iIni + Nx;
+                    for (int j = 0; j < Ny; j++) {
+                        for (int i = 1; i < Nx; i++) {
+                            i_index = index_global_i[i];
+                            UG[i_index][j] = Unew[i][j];                        }
                     }
-                    
-                    if (coords[1] == 0){
-                        for (int j = 0; j < MdomF; j++) {
-                            for (int i = 0; i < NdomF; i++) {
-                                UG[iIni+i][jIni+j] = Unew[i+1][j];
-                            }
-                        }
-                    }
-
-                    if ((coords[0] != 0) && (coords[1] != 0)){
-                        for (int j = 1; j < MdomF + 1; j++) {
-                            for (int i = 1; i < NdomF + 1; i++) {
-                                UG[iIni+i-1][jIni+j-2] = Unew[i][j-1];
-                            }
-                        }
-                    }
-
                     for (int i = 0; i < numtasks-1; i++) {
-                        int lNx;
-                        int lNy;
-                        int lcoords[ndims];
-
-                        MPI_Cart_coords(comm2D,i,ndims,lcoords);
-                        lNx = Ndom;
-                        if (lcoords[0] == divx-1){lNx = NdomF;}
-                        lNy = Mdom ;
-                        if (lcoords[1] == divy-1){lNy = MdomF;}
                         iIni = t_index_global_i[i][0];
-                        jIni = t_index_global_j[i][0];
-                        iFin = t_index_global_i[i][lNx-1];
-                        jFin = t_index_global_j[i][lNy-1];
-
-                        for (int c = 0; c < lNx; c++){
+                        iFin = t_index_global_i[i][Ndom-1];
+                        for (int c = 0; c < Ndom; c++){
                             MPI_Recv(&received_column[0], 1, tipo_col, i, etiqueta, MPI_COMM_WORLD, &statut);
-                            
-                            if (lcoords[1] == 0){
-                                for (int j = 0; j < lNy; j++) {
-                                    UG[iIni + c][jIni + j] = received_column[j];
-                                }
-                            } else {
-                                for (int j = 1; j < lNy + 1; j++) { //lNy + 1 causa desbordes
-                                    UG[iIni + c][jIni + j - 2] = received_column[j-1];
-                                }
+                            for (int j = 0; j < Ny; j++) {
+                                //printf("Entre| tsk: %d\n",i);
+                                UG[iIni + c][j] = received_column[j];
+                                //printf("Salí| tsk: %d\n",i);
                             }
                         }
-
                         for (int j = 0; j < Ny; j++) {
                             for (int k = 0; k < iFin - iIni + 1; k++) {
                                 PG[iIni + k][j] = i;
                             }
                         }
+                        
                     }
-
                     save_paraview(NxG, NyG, xG, yG, t, UG, PG, nrec);
                 }
 
             }
         }
-        
     }
-    //printf("El procesador %d terminó su chamba\n",taskid);
+    printf("El procesador %d terminó su chamba\n",taskid);
     final = MPI_Wtime();
 
     // <----------< VERIFICAR RESULTADOS >---------->
     // Imprimir suma de los elementos para verificar
     iIni = 1;
-    if (coords[0] == 0)
+    iFin = Nx - 1;
+    if (taskid == 0)
         iIni = 0;
-    jIni = 1;
-    if (coords[1] == 0)
-        jIni = 0;
+    if (taskid == numtasks - 1)
+        iFin = Nx;
 
-    iFin = iIni+Ndom;
-    if (coords[0] == divx-1)
-        iFin = iIni+NdomF;
-    
-    jFin = jIni+Mdom;
-    if (coords[1] == divy-1)
-        jFin = jIni+MdomF;
     suma = 0.0;
     for (i = iIni; i < iFin; i++) {
-        for (j = jIni; j < jFin; j++) {
+        for (j = 0; j < Ny; j++) {
             suma += Unew[i][j];
         }
-    }
-    
-    MPI_Barrier(comm2D);
-    if (taskid == numtasks - 1){
-        printf("\n\nMatriz Actualizada en %d:\n",n);
-            for (int i = 0; i < NxG; i++) {
-                for (int j = 0; j < NyG; j++) {
-                    printf("%4f ", UG[i][j]); // Ajuste el ancho de campo según sea necesario
-                }
-                printf("\n");
-            }
-            
-        //printf("iIni: %d iFin: %d\n", iIni, iFin);
-        //printf("jIni: %d jFin: %d\n", jIni, jFin);
-        
-        //printf("taskid=%d, Suma local = %f\n", taskid, suma);
     }
 
     MPI_Allreduce(&suma, &sumaglob, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
     suma = sumaglob;
-    if (taskid == 0)
-        printf("Suma total = %f\n", suma);
+
+    printf("taskid=%d, Suma total = %f\n", taskid, suma);
 
     // Tiempo final
     tiempo = final - inicio;
-    //printf("tiempo=%f, taskid=%d\n", tiempo, taskid);
+    printf("tiempo=%f, taskid=%d\n", tiempo, taskid);
 
     // <----------< FINALIZACIÓN >---------->
     MPI_Type_free(&tipo_col);
@@ -812,7 +531,6 @@ void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew
     for (j = 0; j < Ny; j++) {
         for (i = 0; i < Nx; i++) {
             fprintf(file, "%e\n", Unew[i][j]);
-            //fprintf(file, "Unew[%d][%d]: %e\n", i,j,Unew[i][j]);
         }
     }
 

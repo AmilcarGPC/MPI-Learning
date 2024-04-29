@@ -5,8 +5,8 @@
 !                               2024                                  !
 !---------------------------------------------------------------------!
 !     HOW TO RUN:                                                     !
-!     $ mpif77 Calor2DMPI2024_Opt0.F90 -o Calor2DMPI                  !
-!     $ mpiexec -n 4 ./Calor2DMPI                                     !
+!     $ mpif77 Calor2DMPI2024_Opt0.F90 -o run_Calor2DMPI                  !
+!     $ mpiexec -n 4 ./run_Calor2DMPI                                     !
 !---------------------------------------------------------------------!
 !sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss!
 
@@ -95,7 +95,7 @@
 !     Condiciones Iniciales
       do i=1,NxG
          do j=1,NyG
-            UG(i,j) = 3.0d0*sin(pi*xG(i)+pi*yG(j))**2
+            UG(i,j) = sin(x(i)+y(j))**2
          enddo
       enddo
 
