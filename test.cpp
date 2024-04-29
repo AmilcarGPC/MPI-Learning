@@ -19,8 +19,8 @@ void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew
 int main(int argc, char *argv[]) {
     int divx = 3;
     int divy = 3;
-    int i, j, n, index,i_index,j_index;
-    int NxG, NyG, Nt, Nx, Ny, NN, NNF, nrec, iIni, iFin;
+    int i, j, n,i_index,j_index;
+    int NxG, NyG, Nt, Nx, Ny, nrec, iIni, iFin;
     double kx, ky, xI, xF, yI, yF, tF, tI, Dx, Dy, Dt, t;
     double rx, ry, aC, aN, aS, aE, aW;
     double suma, sumaglob;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     double **UG = nullptr;
     double **PG = nullptr;
     
-    int ierr, numtasks, taskid, tipo_col, tipo_row, tipo_block, etiqueta;
+    int numtasks, taskid, tipo_col, tipo_row, etiqueta;
     int CORDS[2] = {MPI_PROC_NULL, MPI_PROC_NULL};
     int vecino[4];
     int *index_global_i;
@@ -131,17 +131,6 @@ int main(int argc, char *argv[]) {
         numtasks,divx*divy);
         return 0;
     } 
-
-    /*
-    if (taskid == 0){
-        printf("Matriz:\n");
-        for (int i = 0; i < NxG; i++) {
-            for (int j = 0; j < NyG; j++) {
-                printf("%4f ", UG[i][j]); // Ajuste el ancho de campo según sea necesario
-            }
-            printf("\n");
-        }
-    }*/
 
     // MPI: Topologia (cartesiana)
     dims_vec[0] = divx;                                                   
@@ -274,7 +263,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Imprimir
-    /*
     if (taskid == 0) {
         printf("\n");
         printf("(NxG,NyG)=%d %d\n", NxG, NyG);
@@ -282,7 +270,6 @@ int main(int argc, char *argv[]) {
         printf("\n");
     }
     printf("taskid = %d, Ndom = %d, Mdom = %d, Nx_local = %d, Ny_local = %d, index global i = [%d->%d], index global j = [%d->%d]\n", taskid, Ndom, Mdom, Nx, Ny, index_global_i[0], index_global_i[Nx - 1], index_global_j[0], index_global_j[Ny - 1]);
-    */
 
     // MPI: Variables locales
     x = (double *)malloc(Nx * sizeof(double));
@@ -303,6 +290,7 @@ int main(int argc, char *argv[]) {
         j_index = index_global_j[j];
         y[j] = yG[j_index];
     }
+
     // Condiciones Iniciales
         for (i = 0; i < Nx; i++) {
             i_index = index_global_i[i];
@@ -311,6 +299,7 @@ int main(int argc, char *argv[]) {
                 Uold[i][j] = UG[i_index][j_index];
             }
         }
+
     // Actualizacion
     for (int i = 0; i < Nx; i++) {
         for (int j = 0; j < Ny; j++) {
@@ -328,9 +317,7 @@ int main(int argc, char *argv[]) {
     // MPI: Tipo de vectores (comunicaciones)
     MPI_Type_vector(1, Ny, 0, MPI_DOUBLE_PRECISION, &tipo_row);
     MPI_Type_vector(1, MdomF, 0, MPI_DOUBLE_PRECISION, &tipo_col);
-    MPI_Type_vector(NN*Ny,1,1, MPI_DOUBLE_PRECISION, &tipo_block);
     MPI_Type_commit(&tipo_col);
-    MPI_Type_commit(&tipo_block);
     MPI_Type_commit(&tipo_row);
 
     // MPI: Loop de calculos
@@ -341,7 +328,7 @@ int main(int argc, char *argv[]) {
     aW = rx;
     aS = ry;
     aN = ry;
-// ======================================================================================
+
     for (n = 0; n < Nt; n++) {
         // Nuevos valores
         for (i = 1; i < Nx - 1; i++) {
@@ -354,213 +341,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        /*
-        if (n == 0){
-            iIni = 1;
-            if (coords[0] == 0)
-                iIni = 0;
-            jIni = 1;
-            if (coords[1] == 0)
-                jIni = 0;
-
-            iFin = iIni+Ndom;
-            if (coords[0] == divx-1)
-                iFin = iIni+NdomF;
-            
-            jFin = jIni+Mdom;
-            if (coords[1] == divy-1)
-                jFin = jIni+MdomF;
-            suma = 0.0;
-                if (taskid == 0){
-                        printf("\nMatriz Después del cálculo\n");
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("|\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 0){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("|\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 0){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("|\n");
-                }
-                MPI_Barrier(comm2D);
-
-                if (taskid == 3){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf(">\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 3){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 3){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-        }
-        
-        MPI_Barrier(comm2D);
-        if (taskid == 4 && n == 0){
-            printf("v0: %d v1: %d, v2: %d, v3: %d",vecino[0],vecino[1],vecino[2],vecino[3]);
-            printf("Matriz %d:\n",taskid);
-            for (int i = 0; i < Nx; i++) {
-                for (int j = 0; j < Ny; j++) {
-                    printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                }
-                printf("\n");
-            }
-        }
-        MPI_Barrier(comm2D);*/
-
-        
-        // North exchange
+        // Comunicación
         if (vecino[3] != MPI_PROC_NULL) {
             double *sendBuffer = (double *)malloc(Nx * sizeof(double));
             double *recvBuffer = (double *)malloc(Nx * sizeof(double));
@@ -573,6 +354,8 @@ int main(int argc, char *argv[]) {
             for (int i = 0; i < Nx; i++) {
                 Unew[i][Ny - 1] = recvBuffer[i];
             }
+            free(sendBuffer);
+            free(recvBuffer);
         }
 
         if (vecino[2] != MPI_PROC_NULL) {
@@ -587,6 +370,8 @@ int main(int argc, char *argv[]) {
             for (int i = 0; i < Nx; i++) {
                 Unew[i][0] = recvBuffer[i];
             }
+            free(sendBuffer);
+            free(recvBuffer);
         }
 
         MPI_Sendrecv(&Unew[1][0], 1, tipo_row, vecino[0], etiqueta,
@@ -595,209 +380,6 @@ int main(int argc, char *argv[]) {
         MPI_Sendrecv(&Unew[Nx - 2][0], 1, tipo_row, vecino[1], etiqueta,
                          &Unew[Nx - 1][0], 1, tipo_row, vecino[1], etiqueta,
                          comm2D, &statut);
-        /*
-        if (n == 1){
-            iIni = 1;
-            if (coords[0] == 0)
-                iIni = 0;
-            jIni = 1;
-            if (coords[1] == 0)
-                jIni = 0;
-
-            iFin = iIni+Ndom;
-            if (coords[0] == divx-1)
-                iFin = iIni+NdomF;
-            
-            jFin = jIni+Mdom;
-            if (coords[1] == divy-1)
-                jFin = jIni+MdomF;
-            suma = 0.0;
-                if (taskid == 0){
-                        printf("\nMatriz Después del cálculo\n");
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("|\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 0){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("|\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 0){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 1){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 2){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("|\n");
-                }
-                MPI_Barrier(comm2D);
-
-                if (taskid == 3){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf(">\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 3){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 3){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 4){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 5){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+0][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+1][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 6){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 7){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                }
-                MPI_Barrier(comm2D);
-                if (taskid == 8){
-                        for (int j = jIni; j < jFin; j++) {
-                            printf("%4f ", Unew[iIni+2][j]); // Ajuste el ancho de campo según sea necesario
-                        }
-                        printf("\n");
-                }
-                MPI_Barrier(comm2D);
-        }
-        
-        MPI_Barrier(comm2D);
-        if (taskid == 4 && n == 0){
-            printf("Matriz %d:\n",taskid);
-            for (int i = 0; i < Nx; i++) {
-                for (int j = 0; j < Ny; j++) {
-                    printf("%4f ", Unew[i][j]); // Ajuste el ancho de campo según sea necesario
-                }
-                printf("\n");
-            }
-        }
-        MPI_Barrier(comm2D);*/
 
         // Actualización
         for (int i = 0; i < Nx; i++) {
@@ -810,8 +392,6 @@ int main(int argc, char *argv[]) {
         if (n % 1000 == 0) {
             t = tI + n * Dt;
             nrec++;
-            //if (taskid == 0)
-                //printf("%d tiempo: %f\n",nrec,t);
 
             if (Nx <= PARAVIEW_MAX_GRID) {
                 if (taskid < numtasks-1) {
@@ -936,31 +516,40 @@ int main(int argc, char *argv[]) {
 
     // Tiempo final
     tiempo = final - inicio;
-    //printf("tiempo=%f, taskid=%d\n", tiempo, taskid);
+    printf("tiempo=%f, taskid=%d\n", tiempo, taskid);
 
     // <----------< FINALIZACIÓN >---------->
     MPI_Type_free(&tipo_col);
-    MPI_Type_free(&tipo_block);
+    MPI_Type_free(&tipo_row);
     MPI_Finalize();
 
     // Liberar memoria
     free(x);
     free(y);
+    free(xG);
+    free(yG);
     free(index_global_i);
     free(index_global_j);
+
+    for (i = 0; i < numtasks; i++) {
+        free(t_index_global_i[i]);
+        free(t_index_global_j[i]);
+    }
+    free(t_index_global_i);
+    free(t_index_global_j);
+
     for (i = 0; i < Nx; i++) {
         free(Uold[i]);
         free(Unew[i]);
     }
     free(Uold);
     free(Unew);
-    free(xG);
-    free(yG);
-    for (i = 0; i < NxG; i++)
+
+    for (i = 0; i < NxG; i++){
         free(UG[i]);
-    free(UG);
-    for (i = 0; i < NxG; i++)
         free(PG[i]);
+    }
+    free(UG);
     free(PG);
     
     return 0;
@@ -1007,7 +596,6 @@ void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew
     for (j = 0; j < Ny; j++) {
         for (i = 0; i < Nx; i++) {
             fprintf(file, "%e\n", Unew[i][j]);
-            //fprintf(file, "Unew[%d][%d]: %e\n", i,j,Unew[i][j]);
         }
     }
 

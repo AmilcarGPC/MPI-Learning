@@ -19,8 +19,8 @@ void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew
 int main(int argc, char *argv[]) {
     int divx = 3;
     int divy = 3;
-    int i, j, n, index,i_index,j_index;
-    int NxG, NyG, Nt, Nx, Ny, NN, NNF, nrec, iIni, iFin;
+    int i, j, n,i_index,j_index;
+    int NxG, NyG, Nt, Nx, Ny, nrec, iIni, iFin;
     double kx, ky, xI, xF, yI, yF, tF, tI, Dx, Dy, Dt, t;
     double rx, ry, aC, aN, aS, aE, aW;
     double suma, sumaglob;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     double **UG = nullptr;
     double **PG = nullptr;
     
-    int ierr, numtasks, taskid, tipo_col, tipo_row, tipo_block, etiqueta;
+    int numtasks, taskid, tipo_col, tipo_row, etiqueta;
     int CORDS[2] = {MPI_PROC_NULL, MPI_PROC_NULL};
     int vecino[4];
     int *index_global_i;
@@ -131,17 +131,6 @@ int main(int argc, char *argv[]) {
         numtasks,divx*divy);
         return 0;
     } 
-
-    /*
-    if (taskid == 0){
-        printf("Matriz:\n");
-        for (int i = 0; i < NxG; i++) {
-            for (int j = 0; j < NyG; j++) {
-                printf("%4f ", UG[i][j]); // Ajuste el ancho de campo según sea necesario
-            }
-            printf("\n");
-        }
-    }*/
 
     // MPI: Topologia (cartesiana)
     dims_vec[0] = divx;                                                   
@@ -274,7 +263,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Imprimir
-    /*
     if (taskid == 0) {
         printf("\n");
         printf("(NxG,NyG)=%d %d\n", NxG, NyG);
@@ -282,7 +270,6 @@ int main(int argc, char *argv[]) {
         printf("\n");
     }
     printf("taskid = %d, Ndom = %d, Mdom = %d, Nx_local = %d, Ny_local = %d, index global i = [%d->%d], index global j = [%d->%d]\n", taskid, Ndom, Mdom, Nx, Ny, index_global_i[0], index_global_i[Nx - 1], index_global_j[0], index_global_j[Ny - 1]);
-    */
 
     // MPI: Variables locales
     x = (double *)malloc(Nx * sizeof(double));
@@ -328,9 +315,7 @@ int main(int argc, char *argv[]) {
     // MPI: Tipo de vectores (comunicaciones)
     MPI_Type_vector(1, Ny, 0, MPI_DOUBLE_PRECISION, &tipo_row);
     MPI_Type_vector(1, MdomF, 0, MPI_DOUBLE_PRECISION, &tipo_col);
-    MPI_Type_vector(NN*Ny,1,1, MPI_DOUBLE_PRECISION, &tipo_block);
     MPI_Type_commit(&tipo_col);
-    MPI_Type_commit(&tipo_block);
     MPI_Type_commit(&tipo_row);
 
     // MPI: Loop de calculos
@@ -940,7 +925,7 @@ int main(int argc, char *argv[]) {
 
     // <----------< FINALIZACIÓN >---------->
     MPI_Type_free(&tipo_col);
-    MPI_Type_free(&tipo_block);
+    MPI_Type_free(&tipo_row);
     MPI_Finalize();
 
     // Liberar memoria
