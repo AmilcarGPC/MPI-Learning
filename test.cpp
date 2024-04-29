@@ -17,8 +17,8 @@ $ mpiexec -n 4 ./run_test
 void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew, double **PG, int nrec);
 
 int main(int argc, char *argv[]) {
-    int divx = 3;
-    int divy = 3;
+    int divx = 5;
+    int divy = 2;
     int i, j, n,i_index,j_index;
     int NxG, NyG, Nt, Nx, Ny, nrec, iIni, iFin;
     double kx, ky, xI, xF, yI, yF, tF, tI, Dx, Dy, Dt, t;
@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
     tI = 0.0; // Tiempo inicial
     tF = 0.2; // Tiempo final
 
-    Nt = 100000; // Numero de pasos en t
-    NxG = 150;   // Numero de puntos en x (GLOBAL)
-    NyG = 150;   // Numero de puntos en y (GLOBAL)
+    Nt = 200000; // Numero de pasos en t
+    NxG = 400;   // Numero de puntos en x (GLOBAL)
+    NyG = 400;   // Numero de puntos en y (GLOBAL)
 
     // Discretización
     Dx = (xF - xI) / (NxG - 1);
@@ -126,9 +126,10 @@ int main(int argc, char *argv[]) {
             printf("\n CORRECTO: numtasks = divx*divy = %d \n",divx*divy);
         }
     else {
-        if (taskid == 0)
-            printf("\n INCORRECTO: numtasks = %d  y  divx*divy = %d \n",
-        numtasks,divx*divy);
+        if (taskid == 0){
+            printf("\n INCORRECTO: numtasks = %d  y  divx*divy = %d \n", numtasks,divx*divy);
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
         return 0;
     } 
 
@@ -478,6 +479,9 @@ int main(int argc, char *argv[]) {
                     save_paraview(NxG, NyG, xG, yG, t, UG, PG, nrec);
                 }
 
+            } else {
+                if (taskid == 0)
+                    printf("No. %d, time: %f\n",nrec,t);
             }
         }
         
