@@ -14,29 +14,33 @@ $ mpiexec -n 4 ./run_test
 #define pi 3.14159265359
 #define PARAVIEW_MAX_GRID 150
 
-void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew, double **PG, int nrec);
+void save_paraview(int Nx, int Ny, double *x, double *y, double t, double *Unew, double *PG, int nrec);
 
 int main(int argc, char *argv[]) {
-    int divx = 5;
-    int divy = 2;
-    int i, j, n,i_index,j_index;
-    int NxG, NyG, Nt, Nx, Ny, nrec, iIni, iFin;
+    int divx = 6;
+    int divy = 3;
+    int i, j, n, i_index, j_index, up;
+    int NxG, NyG, Nt, Nx, Ny, nrec;
     double kx, ky, xI, xF, yI, yF, tF, tI, Dx, Dy, Dt, t;
     double rx, ry, aC, aN, aS, aE, aW;
     double suma, sumaglob;
     double inicio, final, tiempo;
     double *x, *y, *xG, *yG;
 
-    int Ndom,NdomF;
-    int Mdom,MdomF;
-    int jIni,jFin;
+    int Ndom, NdomF;
+    int Mdom, MdomF;
+    int iIni, iFin, jIni, jFin;
+    int GiIni, GjIni;
 
-    double **Uold = nullptr;
-    double **Unew = nullptr;
-    double **UG = nullptr;
-    double **PG = nullptr;
+    double *Uold = nullptr;
+    double *Unew = nullptr;
+    double *UG = nullptr;
+    double *PG = nullptr;
     
-    int numtasks, taskid, tipo_col, tipo_row, etiqueta;
+    int lNx, lNy;
+    int numtasks, taskid, tipo_block, tipo_row, tipo_col, etiqueta;
+    int tipo_block_rcv_1, tipo_block_rcv_2, tipo_block_rcv_3;
+
     int CORDS[2] = {MPI_PROC_NULL, MPI_PROC_NULL};
     int vecino[4];
     int *index_global_i;
@@ -81,16 +85,12 @@ int main(int argc, char *argv[]) {
 
     xG = (double *)malloc(NxG * sizeof(double));
     yG = (double *)malloc(NyG * sizeof(double));
-    UG = (double **)malloc(NxG * sizeof(double *));
-    PG = (double **)malloc(NxG * sizeof(double *));
-    for (i = 0; i < NxG; i++){
-        UG[i] = (double *)malloc(NyG * sizeof(double));
-        PG[i] = (double *)malloc(NyG * sizeof(double));
-    }
-
+    UG = (double *)malloc(NxG * NyG * sizeof(double));
+    PG = (double *)malloc(NxG * NyG * sizeof(double));
+    up = 0;
     for (i = 0; i < NxG; i++)
         for (j = 0; j < NyG; j++)
-            PG[i][j] = 0.0;
+            PG[up++] = 0.0;
 
     // Malla
     for (i = 0; i < NxG; i++)
@@ -99,19 +99,20 @@ int main(int argc, char *argv[]) {
         yG[j] = yI + j * Dy;
 
     // Condiciones Iniciales
+    up = 0;
     for (i = 0; i < NxG; i++)
         for (j = 0; j < NyG; j++){
-            UG[i][j] = 3.0 * sin(pi * xG[i] + pi * yG[j]) * sin(pi * xG[i] + pi * yG[j]);
+            UG[up++] = 3.0 * sin(pi * xG[i] + pi * yG[j]) * sin(pi * xG[i] + pi * yG[j]);
         }
             
     // Condiciones de frontera
     for (j = 0; j < NyG; j++) {
-        UG[0][j] = 2.0;     // Oeste
-        UG[NxG - 1][j] = 1.0; // Este
+        UG[j] = 2.0;     // Oeste
+        UG[(NxG - 1)*NyG+j] = 1.0; // Este
     }
-    for (i = 0; i < NxG; i++) {
-        UG[i][0] = 1.0;     // Sur
-        UG[i][NyG - 1] = 3.0; // Norte
+    for (i = 0; i < NyG; i++) {
+        UG[i*NyG] = 1.0;     // Sur
+        UG[i*NyG+NyG - 1] = 3.0; // Norte
     }
     
     // <----------< COMPONENTES MPI >---------->
@@ -147,35 +148,20 @@ int main(int argc, char *argv[]) {
     //==========================================
     // MPI [3]: Coordenadas de la malla topologica
     MPI_Cart_coords(comm2D,taskid,ndims,coords);
-        // MPI: División del dominio
-    //-----------------
-    Ndom  = (int)(1.0*NxG/divx);
-    NdomF = NxG - Ndom*(divx-1);
-    //-----------------
-    Nx = Ndom;
-    if (coords[0]==divx-1){Nx = NdomF;}
-    //-----------------
-    iIni = coords[0]*Ndom;
-    iFin = iIni + Nx;
-    //==========================================
 
-    //==========================================
-    // MPI [3]: Division del trabajo  
-    //-----------------
-    Mdom  = (int)(1.0*NyG/divy);
-    MdomF = NyG - Mdom*(divy-1);
-    //-----------------
-    Ny = Mdom ;
-    if (coords[1] == divy-1){
-        Ny = MdomF;
-    }
+    // MPI: División del dominio en X
+    Ndom  = NxG / divx;
+    NdomF = NxG - Ndom * (divx - 1);
+    Nx = (coords[0] < divx - 1) ? Ndom : NdomF;
 
-    //-----------------
-    jIni = coords[1]*Mdom;
-    jFin = jIni + Ny; 
+    // MPI: División del dominio en Y
+    Mdom  = NyG / divy;
+    MdomF = NyG - Mdom * (divy - 1);
+    Ny = (coords[1] < divy - 1) ? Mdom : MdomF;
 
+
+    // Encontrar vecinos del proceso
     int destino;
-
     vecino[0] = MPI_PROC_NULL;
     vecino[1] = MPI_PROC_NULL;
     vecino[2] = MPI_PROC_NULL;
@@ -196,6 +182,7 @@ int main(int argc, char *argv[]) {
         MPI_Cart_rank(comm2D,CORDS,&destino);
         vecino[1] = destino;
     }
+
     if (coords[1] - 1 >= 0) {
         CORDS[0] = coords[0];
         CORDS[1] = coords[1] - 1;
@@ -203,6 +190,7 @@ int main(int argc, char *argv[]) {
         MPI_Cart_rank(comm2D,CORDS, &destino);
         vecino[2] = destino;
     }
+
     if (coords[1] + 1 < divy) {
         Ny++;
         CORDS[0] = coords[0];
@@ -275,12 +263,8 @@ int main(int argc, char *argv[]) {
     // MPI: Variables locales
     x = (double *)malloc(Nx * sizeof(double));
     y = (double *)malloc(Ny * sizeof(double));
-    Uold = (double **)malloc(Nx * sizeof(double *));
-    Unew = (double **)malloc(Nx * sizeof(double *));
-    for (i = 0; i < Nx; i++) {
-        Uold[i] = (double *)malloc(Ny * sizeof(double));
-        Unew[i] = (double *)malloc(Ny * sizeof(double));
-    }
+    Uold = (double *)malloc(Nx * Ny * sizeof(double));
+    Unew = (double *)malloc(Nx * Ny * sizeof(double));
     
     // Malla
     for (i = 0; i < Nx; i++) {
@@ -291,20 +275,23 @@ int main(int argc, char *argv[]) {
         j_index = index_global_j[j];
         y[j] = yG[j_index];
     }
-
-    // Condiciones Iniciales
-        for (i = 0; i < Nx; i++) {
-            i_index = index_global_i[i];
-            for (j = 0; j < Ny; j++) {
-                j_index = index_global_j[j];
-                Uold[i][j] = UG[i_index][j_index];
-            }
+    
+    // Asignar datos a la Matriz local
+    up = 0;
+    for (i = 0; i < Nx; i++) {
+        i_index = index_global_i[i];
+        for (j = 0; j < Ny; j++) {
+            j_index = index_global_j[j];
+            Uold[up++] = UG[i_index*NxG+j_index];
         }
-
+    }
+        
     // Actualizacion
+    up = 0;
     for (int i = 0; i < Nx; i++) {
         for (int j = 0; j < Ny; j++) {
-            Unew[i][j] = Uold[i][j];
+            Unew[up] = Uold[up];
+            up++;
         }
     }
     
@@ -314,12 +301,38 @@ int main(int argc, char *argv[]) {
     if (taskid == 0){
         save_paraview(NxG,NyG,xG,yG,t,UG,PG,nrec);
     }
+    
+    // Inicio y fin en X y Y sin contar la extensión de dominio
+    iIni = 1;
+    if (coords[0] == 0)
+        iIni = 0;
+    jIni = 1;
+    if (coords[1] == 0)
+        jIni = 0;
+    iFin = iIni+Ndom;
+    if (coords[0] == divx-1)
+        iFin = iIni+NdomF;
+    jFin = jIni+Mdom;
+    if (coords[1] == divy-1)
+        jFin = jIni+MdomF;
 
     // MPI: Tipo de vectores (comunicaciones)
     MPI_Type_vector(1, Ny, 0, MPI_DOUBLE_PRECISION, &tipo_row);
-    MPI_Type_vector(1, MdomF, 0, MPI_DOUBLE_PRECISION, &tipo_col);
-    MPI_Type_commit(&tipo_col);
+    MPI_Type_vector(Nx, 1, Ny, MPI_DOUBLE_PRECISION, &tipo_col);
+    MPI_Type_vector((iFin-iIni),(jFin-jIni),Ny,MPI_DOUBLE_PRECISION, &tipo_block);
+    MPI_Type_commit(&tipo_block);
     MPI_Type_commit(&tipo_row);
+    MPI_Type_commit(&tipo_col);
+
+    // Tipo de vectores para recibir los bloques (hay 3 tipos)
+    if (taskid == numtasks - 1){
+        MPI_Type_vector(Ndom,Mdom,Mdom,MPI_DOUBLE_PRECISION, &tipo_block_rcv_1);
+        MPI_Type_vector(NdomF,Mdom,Mdom,MPI_DOUBLE_PRECISION, &tipo_block_rcv_2);
+        MPI_Type_vector(Ndom,MdomF,MdomF,MPI_DOUBLE_PRECISION, &tipo_block_rcv_3);
+        MPI_Type_commit(&tipo_block_rcv_1);
+        MPI_Type_commit(&tipo_block_rcv_2);
+        MPI_Type_commit(&tipo_block_rcv_3);
+    }
 
     // MPI: Loop de calculos
     inicio = MPI_Wtime();
@@ -330,153 +343,106 @@ int main(int argc, char *argv[]) {
     aS = ry;
     aN = ry;
 
+    // Función iterativa para calcular el calor
     for (n = 0; n < Nt; n++) {
         // Nuevos valores
         for (i = 1; i < Nx - 1; i++) {
             for (j = 1; j < Ny - 1; j++) {
-                Unew[i][j] = aC * Uold[i][j] +
-                             aW * Uold[i - 1][j] +
-                             aE * Uold[i + 1][j] +
-                             aS * Uold[i][j - 1] +
-                             aN * Uold[i][j + 1];
+                Unew[i*Ny+j] = aC * Uold[i*Ny+j] +
+                             aW * Uold[(i-1)*Ny+j] +
+                             aE * Uold[(i+1)*Ny+j] +
+                             aS * Uold[i*Ny+j-1] +
+                             aN * Uold[i*Ny+j+1];         
             }
         }
 
         // Comunicación
-        if (vecino[3] != MPI_PROC_NULL) {
-            double *sendBuffer = (double *)malloc(Nx * sizeof(double));
-            double *recvBuffer = (double *)malloc(Nx * sizeof(double));
-            for (int i = 0; i < Nx; i++) {
-                sendBuffer[i] = Unew[i][Ny - 2];
-            }
-            MPI_Sendrecv(&sendBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[3], etiqueta,
-                         &recvBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[3], etiqueta,
+        MPI_Sendrecv(&Unew[Ny], 1, tipo_row, vecino[0], etiqueta,
+                         &Unew[0], 1, tipo_row, vecino[0], etiqueta,
                          comm2D, &statut);
-            for (int i = 0; i < Nx; i++) {
-                Unew[i][Ny - 1] = recvBuffer[i];
-            }
-            free(sendBuffer);
-            free(recvBuffer);
-        }
-
-        if (vecino[2] != MPI_PROC_NULL) {
-            double *sendBuffer = (double *)malloc(Nx * sizeof(double));
-            double *recvBuffer = (double *)malloc(Nx * sizeof(double));
-            for (int i = 0; i < Nx; i++) {
-                sendBuffer[i] = Unew[i][1];
-            }
-            MPI_Sendrecv(&sendBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[2], etiqueta,
-                         &recvBuffer[0], Nx, MPI_DOUBLE_PRECISION, vecino[2], etiqueta,
+                         
+        MPI_Sendrecv(&Unew[(Nx - 2)*Ny], 1, tipo_row, vecino[1], etiqueta,
+                         &Unew[(Nx - 1)*Ny], 1, tipo_row, vecino[1], etiqueta,
                          comm2D, &statut);
-            for (int i = 0; i < Nx; i++) {
-                Unew[i][0] = recvBuffer[i];
-            }
-            free(sendBuffer);
-            free(recvBuffer);
-        }
-
-        MPI_Sendrecv(&Unew[1][0], 1, tipo_row, vecino[0], etiqueta,
-                         &Unew[0][0], 1, tipo_row, vecino[0], etiqueta,
+                         
+        MPI_Sendrecv(&Unew[1], 1, tipo_col, vecino[2], etiqueta,
+                         &Unew[0], 1, tipo_col, vecino[2], etiqueta,
                          comm2D, &statut);
-        MPI_Sendrecv(&Unew[Nx - 2][0], 1, tipo_row, vecino[1], etiqueta,
-                         &Unew[Nx - 1][0], 1, tipo_row, vecino[1], etiqueta,
+        MPI_Sendrecv(&Unew[Ny - 2], 1, tipo_col, vecino[3], etiqueta,
+                         &Unew[Ny - 1], 1, tipo_col, vecino[3], etiqueta,
                          comm2D, &statut);
-
+        
         // Actualización
+        up = 0;
         for (int i = 0; i < Nx; i++) {
             for (int j = 0; j < Ny; j++) {
-                Uold[i][j] = Unew[i][j];
+                Uold[up] = Unew[up];
+                up++;
             }
         }
         
+        /*
         // Guardar resultados cada 1000 iteraciones
         if (n % 1000 == 0) {
             t = tI + n * Dt;
             nrec++;
-
+            
             if (Nx <= PARAVIEW_MAX_GRID) {
-                if (taskid < numtasks-1) {
-                    int lNx;
-                    lNx = Ndom;
-                    if (coords[0]==divx-1){
-                        lNx = NdomF;
-                    }
-                    iIni = 1;
-                    if (coords[0] == 0)
-                        iIni = 0;
-
-                    for (int c = 0; c < lNx; c++){
-                        MPI_Send(&Unew[iIni+c][0], 1, tipo_col, numtasks - 1, etiqueta, MPI_COMM_WORLD);
-                    }             
+                
+                if (taskid < numtasks - 1) {
+                    // Enviar todos los bloques al último proceso
+                    MPI_Send(&Unew[iIni*Ny+jIni], 1, tipo_block, numtasks - 1, etiqueta, MPI_COMM_WORLD);
                 }
-
+                
                 MPI_Barrier(comm2D);
+                
                 if (taskid == numtasks-1) {
-                    double received_column[Ny];
-                    iIni = t_index_global_i[taskid][0];
-                    jIni = t_index_global_j[taskid][0];
+                    GiIni = t_index_global_i[taskid][0];
+                    GjIni = t_index_global_j[taskid][0];
                     
-                    if (coords[0] == 0){
-                        for (int j = 0; j < MdomF; j++) {
-                            for (int i = 0; i < NdomF; i++) {
-                                UG[iIni+i][jIni+j-1] = Unew[i][j];
-                            }
-                        }
-                    }
-                    
-                    if (coords[1] == 0){
-                        for (int j = 0; j < MdomF; j++) {
-                            for (int i = 0; i < NdomF; i++) {
-                                UG[iIni+i][jIni+j] = Unew[i+1][j];
-                            }
+                    // Escribir el último bloque en la Matriz Original
+                    for (int j = 0; j < MdomF; j++) {
+                        for (int i = 0; i < NdomF; i++) {
+                            UG[(GiIni+i)*NyG+GjIni+j] = Unew[(iIni+i)*Ny+(j+jIni)];
                         }
                     }
 
-                    if ((coords[0] != 0) && (coords[1] != 0)){
-                        for (int j = 1; j < MdomF + 1; j++) {
-                            for (int i = 1; i < NdomF + 1; i++) {
-                                UG[iIni+i-1][jIni+j-2] = Unew[i][j-1];
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < numtasks-1; i++) {
-                        int lNx;
-                        int lNy;
-                        int lcoords[ndims];
-
-                        MPI_Cart_coords(comm2D,i,ndims,lcoords);
+                    for (int i = 0; i < numtasks - 1; i++) {
+                        // Establecer los límites de cada bloque en la Matriz Original
+                        MPI_Cart_coords(comm2D,i,ndims,pcoords);
                         lNx = Ndom;
-                        if (lcoords[0] == divx-1){lNx = NdomF;}
+                        if (pcoords[0] == divx-1){lNx = NdomF;}
                         lNy = Mdom ;
-                        if (lcoords[1] == divy-1){lNy = MdomF;}
-                        iIni = t_index_global_i[i][0];
-                        jIni = t_index_global_j[i][0];
-                        iFin = t_index_global_i[i][lNx-1];
-                        jFin = t_index_global_j[i][lNy-1];
+                        if (pcoords[1] == divy-1){lNy = MdomF;}
+                        GiIni = t_index_global_i[i][0];
+                        GjIni = t_index_global_j[i][0];
 
-                        for (int c = 0; c < lNx; c++){
-                            MPI_Recv(&received_column[0], 1, tipo_col, i, etiqueta, MPI_COMM_WORLD, &statut);
-                            
-                            if (lcoords[1] == 0){
-                                for (int j = 0; j < lNy; j++) {
-                                    UG[iIni + c][jIni + j] = received_column[j];
-                                }
+                        // Recibir todos los bloques
+                        double *receivedBlock;
+                        receivedBlock = (double *)malloc(lNx * lNy * sizeof(double));
+                        if (pcoords[0] == divx-1){
+                            MPI_Recv(&receivedBlock[0], 1, tipo_block_rcv_2, i, etiqueta, MPI_COMM_WORLD, &statut);
+                        } else {
+                            if (pcoords[1] == divy-1){
+                                MPI_Recv(&receivedBlock[0], 1, tipo_block_rcv_3, i, etiqueta, MPI_COMM_WORLD, &statut);
                             } else {
-                                for (int j = 1; j < lNy + 1; j++) { //lNy + 1 causa desbordes
-                                    UG[iIni + c][jIni + j - 2] = received_column[j-1];
-                                }
+                                MPI_Recv(&receivedBlock[0], 1, tipo_block_rcv_1, i, etiqueta, MPI_COMM_WORLD, &statut);
+                            }
+                        }
+                        
+                        // Escribir cada bloque en su lugar correspondiente de la Matriz Original
+                        up = 0;
+                        for (int c = 0; c < lNx; c++){
+                            for (int j = 0; j < lNy; j++) {
+                                UG[(c+GiIni)*NyG+(j+GjIni)] = receivedBlock[up++];
                             }
                         }
 
-                        for (int j = 0; j < Ny; j++) {
-                            for (int k = 0; k < iFin - iIni + 1; k++) {
-                                PG[iIni + k][j] = i;
-                            }
-                        }
+                        free(receivedBlock);
                     }
-
+                    
                     save_paraview(NxG, NyG, xG, yG, t, UG, PG, nrec);
+                    
                 }
 
             } else {
@@ -484,31 +450,16 @@ int main(int argc, char *argv[]) {
                     printf("No. %d, time: %f\n",nrec,t);
             }
         }
-        
+        */
     }
-    //printf("El procesador %d terminó su chamba\n",taskid);
     final = MPI_Wtime();
 
     // <----------< VERIFICAR RESULTADOS >---------->
     // Imprimir suma de los elementos para verificar
-    iIni = 1;
-    if (coords[0] == 0)
-        iIni = 0;
-    jIni = 1;
-    if (coords[1] == 0)
-        jIni = 0;
-
-    iFin = iIni+Ndom;
-    if (coords[0] == divx-1)
-        iFin = iIni+NdomF;
-    
-    jFin = jIni+Mdom;
-    if (coords[1] == divy-1)
-        jFin = jIni+MdomF;
     suma = 0.0;
     for (i = iIni; i < iFin; i++) {
         for (j = jIni; j < jFin; j++) {
-            suma += Unew[i][j];
+            suma += Unew[i*Ny+j];
         }
     }
 
@@ -523,8 +474,15 @@ int main(int argc, char *argv[]) {
     printf("tiempo=%f, taskid=%d\n", tiempo, taskid);
 
     // <----------< FINALIZACIÓN >---------->
-    MPI_Type_free(&tipo_col);
+    if (taskid == numtasks - 1){
+        MPI_Type_free(&tipo_block_rcv_1);
+        MPI_Type_free(&tipo_block_rcv_2);
+        MPI_Type_free(&tipo_block_rcv_3);
+    }
+
+    MPI_Type_free(&tipo_block);
     MPI_Type_free(&tipo_row);
+    MPI_Type_free(&tipo_col);
     MPI_Finalize();
 
     // Liberar memoria
@@ -541,32 +499,22 @@ int main(int argc, char *argv[]) {
     }
     free(t_index_global_i);
     free(t_index_global_j);
-
-    for (i = 0; i < Nx; i++) {
-        free(Uold[i]);
-        free(Unew[i]);
-    }
     free(Uold);
     free(Unew);
-
-    for (i = 0; i < NxG; i++){
-        free(UG[i]);
-        free(PG[i]);
-    }
     free(UG);
     free(PG);
     
     return 0;
 }
 
-void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew, double **PG, int nrec) {
+void save_paraview(int Nx, int Ny, double *x, double *y, double t, double *Unew, double *PG, int nrec) {
     int i, j;
     FILE *file;
     char filen[100]; // Aumenta el tamaño del nombre del archivo para incluir la ruta completa
 
     // Construcción de la ruta completa del archivo
     sprintf(filen, "%s/P-%04d.vtk", "paraview", nrec);
-
+    
     // Apertura del archivo de salida
     file = fopen(filen, "w");
 
@@ -599,7 +547,7 @@ void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew
     fprintf(file, "LOOKUP_TABLE default\n");
     for (j = 0; j < Ny; j++) {
         for (i = 0; i < Nx; i++) {
-            fprintf(file, "%e\n", Unew[i][j]);
+            fprintf(file, "%e\n", Unew[i*Ny+j]);
         }
     }
 
@@ -607,7 +555,7 @@ void save_paraview(int Nx, int Ny, double *x, double *y, double t, double **Unew
     fprintf(file, "LOOKUP_TABLE default\n");
     for (j = 0; j < Ny; j++) {
         for (i = 0; i < Nx; i++) {
-            fprintf(file, "%e ", PG[i][j]);
+            fprintf(file, "%e ", PG[i*Nx+j]);
         }
         fprintf(file, "\n");
     }

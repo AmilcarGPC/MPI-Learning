@@ -63,7 +63,7 @@
       tF = 0.2d0        ! Tiempo final
 !     ----------      
       Nt  = 200000      ! Numero de puntos en t
-      NxG = 150         ! Numero de puntos en x (GLOBAL)
+      NxG = 200         ! Numero de puntos en x (GLOBAL)
       NyG = 150         ! Numero de puntos en y (GLOBAL)
 
 !     ______________________________________________________
