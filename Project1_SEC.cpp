@@ -1,3 +1,10 @@
+/*
+PROGRAM: Calculate Heat Equation                                                        
+HOW TO RUN :                                            
+$ mpicxx Project1_SEC.cpp -o run_Project1_SEC
+$ ./run_Project1_SEC
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -76,7 +83,7 @@ int main(int argc, char *argv[]) {
     }
 
     // <----------< PROGRAMA PRINCIPAL >---------->
-    // MPI: Loop de calculos
+    // Loop de calculos
     aC = 1 - 2.0 * (rx + ry);
     aE = rx;
     aW = rx;
@@ -104,6 +111,7 @@ int main(int argc, char *argv[]) {
         }
     }
     clock_t final = clock();
+    
     // <----------< VERIFICAR RESULTADOS >---------->
     // Imprimir suma de los elementos para verificar
     suma = 0.0;

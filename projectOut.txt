@@ -1,0 +1,420 @@
+Config: 1 × 1: 1
+Epoch: 0 | avgT: 519.191997 | Suma total = 436185.704177
+Epoch: 1 | avgT: 520.440625 | Suma total = 436185.704177
+Epoch: 2 | avgT: 517.612128 | Suma total = 436185.704177
+Epoch: 3 | avgT: 521.245831 | Suma total = 436185.704177
+Epoch: 4 | avgT: 521.605052 | Suma total = 436185.704177
+>>> Statistics: avg: 520.019127 | speedUp: 1.000000 | efficiency : 1.000000 |
+Config: 1 × 2: 2
+Epoch: 0 | avgT: 265.101455 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 270.271773 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 270.888177 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 271.586522 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 270.899289 | Suma total = 436185.704177 |
+>>> Statistics: avg: 269.749443 | speedUp: 1.927786 | efficiency : 0.963893 |
+Config: 2 × 1: 2
+Epoch: 0 | avgT: 271.463405 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 270.940943 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 272.601740 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 271.855185 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 270.803659 | Suma total = 436185.704177 |
+>>> Statistics: avg: 271.532986 | speedUp: 1.915123 | efficiency : 0.957562 |
+Config: 1 × 3: 3
+Epoch: 0 | avgT: 182.826108 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 182.421210 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 182.514013 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 183.465884 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 182.890204 | Suma total = 436185.704177 |
+>>> Statistics: avg: 182.823484 | speedUp: 2.844378 | efficiency : 0.948126 |
+Config: 3 × 1: 3
+Epoch: 0 | avgT: 182.004380 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 181.949956 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 182.485610 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 183.593369 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 183.233334 | Suma total = 436185.704177 |
+>>> Statistics: avg: 182.653330 | speedUp: 2.847028 | efficiency : 0.949009 |
+Config: 1 × 4: 4
+Epoch: 0 | avgT: 140.201921 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 140.113911 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 140.037875 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 140.310765 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 139.927073 | Suma total = 436185.704177 |
+>>> Statistics: avg: 140.118309 | speedUp: 3.711286 | efficiency : 0.927822 |
+Config: 2 × 2: 4
+Epoch: 0 | avgT: 139.218746 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 139.028993 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 139.014942 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 139.573488 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 139.664779 | Suma total = 436185.704177 |
+>>> Statistics: avg: 139.300190 | speedUp: 3.733083 | efficiency : 0.933271 |
+Config: 4 × 1: 4
+Epoch: 0 | avgT: 139.197461 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 139.076278 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 138.841031 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 139.073764 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 139.570889 | Suma total = 436185.704177 |
+>>> Statistics: avg: 139.151885 | speedUp: 3.737061 | efficiency : 0.934265 |
+Config: 1 × 5: 5
+Epoch: 0 | avgT: 116.025208 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 115.061590 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 113.848861 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 113.950120 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 113.809729 | Suma total = 436185.704177 |
+>>> Statistics: avg: 114.539102 | speedUp: 4.540101 | efficiency : 0.908020 |
+Config: 5 × 1: 5
+Epoch: 0 | avgT: 112.549676 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 112.649945 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 112.565664 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 112.473753 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 112.490617 | Suma total = 436185.704177 |
+>>> Statistics: avg: 112.545931 | speedUp: 4.620506 | efficiency : 0.924101 |
+Config: 1 × 6: 6
+Epoch: 0 | avgT: 97.083279 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 96.842148 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 96.583694 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 96.567606 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 96.452409 | Suma total = 436185.704177 |
+>>> Statistics: avg: 96.705827 | speedUp: 5.377330 | efficiency : 0.896222 |
+Config: 2 × 3: 6
+Epoch: 0 | avgT: 95.804292 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 95.881578 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 95.830490 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 96.049763 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 95.849940 | Suma total = 436185.704177 |
+>>> Statistics: avg: 95.883213 | speedUp: 5.423464 | efficiency : 0.903911 |
+Config: 3 × 2: 6
+Epoch: 0 | avgT: 95.686225 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 95.644574 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 95.580676 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 95.511477 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 95.526315 | Suma total = 436185.704177 |
+>>> Statistics: avg: 95.589854 | speedUp: 5.440108 | efficiency : 0.906685 |
+Config: 6 × 1: 6
+Epoch: 0 | avgT: 95.942768 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 95.959403 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 95.720248 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 95.426296 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 95.509836 | Suma total = 436185.704177 |
+>>> Statistics: avg: 95.711710 | speedUp: 5.433182 | efficiency : 0.905530 |
+Config: 1 × 7: 7
+Epoch: 0 | avgT: 84.256280 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 83.974957 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 84.567454 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 84.226299 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 84.017089 | Suma total = 436185.704177 |
+>>> Statistics: avg: 84.208416 | speedUp: 6.175382 | efficiency : 0.882197 |
+Config: 7 × 1: 7
+Epoch: 0 | avgT: 83.647832 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 83.593627 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 83.521760 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 83.712348 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 83.665987 | Suma total = 436185.704177 |
+>>> Statistics: avg: 83.628311 | speedUp: 6.218219 | efficiency : 0.888317 |
+Config: 1 × 8: 8
+Epoch: 0 | avgT: 75.056102 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 74.935668 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 74.936459 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 74.964546 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 74.981593 | Suma total = 436185.704177 |
+>>> Statistics: avg: 74.974874 | speedUp: 6.935912 | efficiency : 0.866989 |
+Config: 2 × 4: 8
+Epoch: 0 | avgT: 72.480677 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 72.576155 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 72.420859 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 72.333871 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 72.390872 | Suma total = 436185.704177 |
+>>> Statistics: avg: 72.440487 | speedUp: 7.178570 | efficiency : 0.897321 |
+Config: 4 × 2: 8
+Epoch: 0 | avgT: 72.066871 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 72.211882 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 72.355502 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 72.116552 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 72.081415 | Suma total = 436185.704177 |
+>>> Statistics: avg: 72.166444 | speedUp: 7.205830 | efficiency : 0.900729 |
+Config: 8 × 1: 8
+Epoch: 0 | avgT: 74.578976 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 74.287400 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 74.332012 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 74.312400 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 74.236135 | Suma total = 436185.704177 |
+>>> Statistics: avg: 74.349385 | speedUp: 6.994263 | efficiency : 0.874283 |
+Config: 1 × 9: 9
+Epoch: 0 | avgT: 68.449859 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 68.502520 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 68.327048 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 68.472405 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 68.412858 | Suma total = 436185.704177 |
+>>> Statistics: avg: 68.432938 | speedUp: 7.598960 | efficiency : 0.844329 |
+Config: 3 × 3: 9
+Epoch: 0 | avgT: 64.593494 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 64.303881 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 64.327070 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 64.367607 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 64.315861 | Suma total = 436185.704177 |
+>>> Statistics: avg: 64.381583 | speedUp: 8.077141 | efficiency : 0.897460 |
+Config: 9 × 1: 9
+Epoch: 0 | avgT: 67.633675 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 67.783165 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 67.989435 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 67.868045 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 67.735264 | Suma total = 436185.704177 |
+>>> Statistics: avg: 67.801917 | speedUp: 7.669682 | efficiency : 0.852187 |
+Config: 1 × 10: 10
+Epoch: 0 | avgT: 58.955263 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 59.053893 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 58.852571 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 58.838594 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 58.835049 | Suma total = 436185.704177 |
+>>> Statistics: avg: 58.907074 | speedUp: 8.827787 | efficiency : 0.882779 |
+Config: 2 × 5: 10
+Epoch: 0 | avgT: 58.575946 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 58.254800 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 58.494832 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 58.358543 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 58.440413 | Suma total = 436185.704177 |
+>>> Statistics: avg: 58.424907 | speedUp: 8.900641 | efficiency : 0.890064 |
+Config: 5 × 2: 10
+Epoch: 0 | avgT: 57.936813 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 57.994489 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 57.870658 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 57.923712 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 57.765690 | Suma total = 436185.704177 |
+>>> Statistics: avg: 57.898272 | speedUp: 8.981600 | efficiency : 0.898160 |
+Config: 10 × 1: 10
+Epoch: 0 | avgT: 58.136768 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 58.160959 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 58.263638 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 58.100542 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 57.995819 | Suma total = 436185.704177 |
+>>> Statistics: avg: 58.131545 | speedUp: 8.945558 | efficiency : 0.894556 |
+Config: 1 × 11: 11
+Epoch: 0 | avgT: 57.129374 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 57.247245 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 57.342610 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 57.172799 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 57.313965 | Suma total = 436185.704177 |
+>>> Statistics: avg: 57.241199 | speedUp: 9.084700 | efficiency : 0.825882 |
+Config: 11 × 1: 11
+Epoch: 0 | avgT: 56.131157 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 56.052887 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 56.430496 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 56.229051 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 56.142462 | Suma total = 436185.704177 |
+>>> Statistics: avg: 56.197211 | speedUp: 9.253469 | efficiency : 0.841224 |
+Config: 1 × 12: 12
+Epoch: 0 | avgT: 55.870126 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 55.770431 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 55.777089 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 55.929527 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 55.895074 | Suma total = 436185.704177 |
+>>> Statistics: avg: 55.848449 | speedUp: 9.311255 | efficiency : 0.775938 |
+Config: 2 × 6: 12
+Epoch: 0 | avgT: 48.889489 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 48.897908 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 48.817236 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 48.932648 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 48.847917 | Suma total = 436185.704177 |
+>>> Statistics: avg: 48.877040 | speedUp: 10.639334 | efficiency : 0.886611 |
+Config: 3 × 4: 12
+Epoch: 0 | avgT: 48.790326 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 48.912030 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 48.865186 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 48.656260 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 48.787487 | Suma total = 436185.704177 |
+>>> Statistics: avg: 48.802258 | speedUp: 10.655637 | efficiency : 0.887970 |
+Config: 4 × 3: 12
+Epoch: 0 | avgT: 48.644332 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 48.622617 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 48.672533 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 48.591575 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 48.602560 | Suma total = 436185.704177 |
+>>> Statistics: avg: 48.626724 | speedUp: 10.694102 | efficiency : 0.891175 |
+Config: 6 × 2: 12
+Epoch: 0 | avgT: 48.294034 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 48.184275 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 48.554059 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 48.503769 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 48.408482 | Suma total = 436185.704177 |
+>>> Statistics: avg: 48.388924 | speedUp: 10.746656 | efficiency : 0.895555 |
+Config: 12 × 1: 12
+Epoch: 0 | avgT: 55.077555 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 54.950697 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 55.203462 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 55.286063 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 54.967599 | Suma total = 436185.704177 |
+>>> Statistics: avg: 55.097075 | speedUp: 9.438235 | efficiency : 0.786520 |
+Config: 1 × 13: 13
+Epoch: 0 | avgT: 50.337141 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 50.251201 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 50.323952 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 50.205544 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 50.294724 | Suma total = 436185.704177 |
+>>> Statistics: avg: 50.282512 | speedUp: 10.341948 | efficiency : 0.795534 |
+Config: 13 × 1: 13
+Epoch: 0 | avgT: 49.432283 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 49.329152 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 49.198549 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 49.552337 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 49.584241 | Suma total = 436185.704177 |
+>>> Statistics: avg: 49.419312 | speedUp: 10.522589 | efficiency : 0.809430 |
+Config: 1 × 14: 14
+Epoch: 0 | avgT: 51.497961 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 51.522766 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 51.595433 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 51.384269 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 51.510079 | Suma total = 436185.704177 |
+>>> Statistics: avg: 51.502102 | speedUp: 10.097047 | efficiency : 0.721218 |
+Config: 2 × 7: 14
+Epoch: 0 | avgT: 42.529014 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 42.416889 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 42.489717 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 42.411532 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 42.502905 | Suma total = 436185.704177 |
+>>> Statistics: avg: 42.470011 | speedUp: 12.244384 | efficiency : 0.874599 |
+Config: 7 × 2: 14
+Epoch: 0 | avgT: 42.373657 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 42.203297 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 42.047286 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 42.244160 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 42.211903 | Suma total = 436185.704177 |
+>>> Statistics: avg: 42.216061 | speedUp: 12.318040 | efficiency : 0.879860 |
+Config: 14 × 1: 14
+Epoch: 0 | avgT: 50.699897 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 50.545567 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 50.406886 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 50.309903 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 50.456234 | Suma total = 436185.704177 |
+>>> Statistics: avg: 50.483698 | speedUp: 10.300734 | efficiency : 0.735767 |
+Config: 1 × 15: 15
+Epoch: 0 | avgT: 43.509996 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 43.563264 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 43.565341 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 43.554883 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 43.386587 | Suma total = 436185.704177 |
+>>> Statistics: avg: 43.516014 | speedUp: 11.950063 | efficiency : 0.796671 |
+Config: 3 × 5: 15
+Epoch: 0 | avgT: 39.380119 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 39.282646 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 39.387676 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 39.427828 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 39.381628 | Suma total = 436185.704177 |
+>>> Statistics: avg: 39.371979 | speedUp: 13.207848 | efficiency : 0.880523 |
+Config: 5 × 3: 15
+Epoch: 0 | avgT: 39.203452 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 39.057335 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 39.110470 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 39.215734 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 39.178962 | Suma total = 436185.704177 |
+>>> Statistics: avg: 39.153191 | speedUp: 13.281654 | efficiency : 0.885444 |
+Config: 15 × 1: 15
+Epoch: 0 | avgT: 42.995863 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 43.101909 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 42.952388 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 43.281640 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 42.850903 | Suma total = 436185.704177 |
+>>> Statistics: avg: 43.036540 | speedUp: 12.083200 | efficiency : 0.805547 |
+Config: 1 × 16: 16
+Epoch: 0 | avgT: 40.166974 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 40.196439 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 40.099762 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 39.991223 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 40.135303 | Suma total = 436185.704177 |
+>>> Statistics: avg: 40.117940 | speedUp: 12.962259 | efficiency : 0.810141 |
+Config: 2 × 8: 16
+Epoch: 0 | avgT: 37.861455 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 37.857429 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 37.732938 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 37.886552 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 38.046004 | Suma total = 436185.704177 |
+>>> Statistics: avg: 37.876876 | speedUp: 13.729198 | efficiency : 0.858075 |
+Config: 4 × 4: 16
+Epoch: 0 | avgT: 34.562107 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 34.354019 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 34.585404 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 34.454272 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 34.588213 | Suma total = 436185.704177 |
+>>> Statistics: avg: 34.508803 | speedUp: 15.069173 | efficiency : 0.941823 |
+Config: 8 × 2: 16
+Epoch: 0 | avgT: 37.645528 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 37.639424 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 37.553677 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 37.590251 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 37.544003 | Suma total = 436185.704177 |
+>>> Statistics: avg: 37.594577 | speedUp: 13.832291 | efficiency : 0.864518 |
+Config: 16 × 1: 16
+Epoch: 0 | avgT: 39.359173 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 39.188034 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 39.196508 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 39.149316 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 39.112033 | Suma total = 436185.704177 |
+>>> Statistics: avg: 39.201013 | speedUp: 13.265451 | efficiency : 0.829091 |
+Config: 1 × 17: 17
+Epoch: 0 | avgT: 41.324781 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 41.356517 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 41.241834 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 41.224515 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 41.326016 | Suma total = 436185.704177 |
+>>> Statistics: avg: 41.294733 | speedUp: 12.592868 | efficiency : 0.740757 |
+Config: 17 × 1: 17
+Epoch: 0 | avgT: 45.413811 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 40.466703 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 40.599204 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 40.737226 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 40.597068 | Suma total = 436185.704177 |
+>>> Statistics: avg: 41.562803 | speedUp: 12.511647 | efficiency : 0.735979 |
+Config: 1 × 18: 18
+Epoch: 0 | avgT: 47.837459 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 47.907391 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 47.874400 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 47.915572 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 48.234653 | Suma total = 436185.704177 |
+>>> Statistics: avg: 47.953895 | speedUp: 10.844148 | efficiency : 0.602453 |
+Config: 2 × 9: 18
+Epoch: 0 | avgT: 32.777621 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 32.627016 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 32.881667 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 32.720741 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 32.839396 | Suma total = 436185.704177 |
+>>> Statistics: avg: 32.769288 | speedUp: 15.869100 | efficiency : 0.881617 |
+Config: 3 × 6: 18
+Epoch: 0 | avgT: 31.074609 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 30.768597 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 31.153932 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 31.146093 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 31.086571 | Suma total = 436185.704177 |
+>>> Statistics: avg: 31.045960 | speedUp: 16.749977 | efficiency : 0.930554 |
+Config: 6 × 3: 18
+Epoch: 0 | avgT: 30.954418 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 30.672192 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 30.942515 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 30.799786 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 30.776747 | Suma total = 436185.704177 |
+>>> Statistics: avg: 30.829132 | speedUp: 16.867784 | efficiency : 0.937099 |
+Config: 9 × 2: 18
+Epoch: 0 | avgT: 32.160614 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 31.975712 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 32.204205 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 32.035367 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 32.154574 | Suma total = 436185.704177 |
+>>> Statistics: avg: 32.106095 | speedUp: 16.196898 | efficiency : 0.899828 |
+Config: 18 × 1: 18
+Epoch: 0 | avgT: 46.568256 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 46.315846 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 46.426569 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 46.610025 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 46.404708 | Suma total = 436185.704177 |
+>>> Statistics: avg: 46.465081 | speedUp: 11.191611 | efficiency : 0.621756 |
+Config: 1 × 19: 19
+Epoch: 0 | avgT: 37.461401 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 37.246542 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 37.426170 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 37.238287 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 37.445340 | Suma total = 436185.704177 |
+>>> Statistics: avg: 37.363548 | speedUp: 13.917820 | efficiency : 0.732517 |
+Config: 19 × 1: 19
+Epoch: 0 | avgT: 36.730197 | Suma total = 436185.704177 |
+Epoch: 1 | avgT: 36.641871 | Suma total = 436185.704177 |
+Epoch: 2 | avgT: 36.851343 | Suma total = 436185.704177 |
+Epoch: 3 | avgT: 36.467987 | Suma total = 436185.704177 |
+Epoch: 4 | avgT: 36.580537 | Suma total = 436185.704177 |
+>>> Statistics: avg: 36.654387 | speedUp: 14.187091 | efficiency : 0.746689 |

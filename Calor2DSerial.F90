@@ -5,8 +5,8 @@
 !                               2024                                  !
 !---------------------------------------------------------------------!
 !    HOW TO RUN:                                                      !
-!    $ mpif77 Calor2DSerial.F90 -o Calor2DSerial                      !
-!    $ ./Calor2DSerial                                                !
+!    $ mpif77 Calor2DSerial.F90 -o run_Calor2DSerial                      !
+!    $ ./run_Calor2DSerial                                                !
 !---------------------------------------------------------------------!
 !sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss!
 
@@ -21,6 +21,7 @@
       real*8  :: tF,tI
       real*8  :: Dx,Dy,Dt,t
 !     -------------------
+      real*8, parameter :: pi = 3.14159265359d0 
       real*8, dimension(:),  allocatable :: x
       real*8, dimension(:),  allocatable :: y
       real*8, dimension(:,:),allocatable :: Uold
@@ -106,7 +107,7 @@
 !     Condiciones iniciales
       do i=1,Nx
          do j=1,Ny
-            Uold(i,j) = sin(x(i)+y(j))**2
+            Uold(i,j) = 3.0d0*sin(pi*x(i)+pi*y(j))**2
          enddo
       enddo
       Unew = Uold
@@ -114,7 +115,7 @@
 !     ------------------------
 !     Condiciones de frontera
       do j=1,Ny
-         Unew(1,j)  = 1.0d0  !Oeste
+         Unew(1,j)  = 2.0d0  !Oeste
          Unew(Nx,j) = 1.0d0  !Este
       enddo
       do i=1,Nx
@@ -123,7 +124,6 @@
       enddo
 
       nrec = 0
-      call save_paraview(Nx,Ny,x,y,t,Unew,nrec)
       
 !     ______________________________________________________          
 !     Calculos en los puntos interiores
@@ -150,12 +150,6 @@
 !        Actualización
          Uold = Unew
 !        ------------------------
-!        Guardar resultados
-         if (mod(n,1000).eq.0) then
-            t = tI + n*Dt
-            nrec = nrec + 1
-            call save_paraview(Nx,Ny,x,y,t,Unew,nrec)
-         endif  
          
       ENDDO
 
